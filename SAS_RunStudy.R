@@ -16,7 +16,7 @@ rm(list = ls( ))
 # When running the case on a local computer, modify this in case you saved the case in a different directory 
 # (e.g. local_directory <- "C:/user/MyDocuments" )
 # type in the Console below help(getwd) and help(setwd) for more information
-local_directory <- paste(getwd(),"CourseSessions/Temp23", sep="/")
+local_directory <- paste(getwd(),"Keggle", sep="/")
 #local_directory <- "~INSEADAnalytics/CourseSessions/Sessions23"
 
 cat("\n *********\n WORKING DIRECTORY IS ", local_directory, "\n PLEASE CHANGE IT IF IT IS NOT CORRECT using setwd(..) - type help(setwd) for more information \n *********")
