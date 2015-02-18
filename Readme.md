@@ -1,8 +1,3 @@
-Data Analytics Course Session: 
----------------------------------------------------------
-Sessions 2-3 of INSEAD Data Analytics for Business Course: Dimensionality Reduction and Derived Attributes 
----------------------------------------------------------
-
 
 **Organization:** INSEAD
 
