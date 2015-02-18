@@ -1,0 +1,267 @@
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+<style type="text/css"> body {padding: 10px 30px 10px 30px;} table,th, td {text-align: center;} </style>
+
+
+Dimensionality Reduction and Factor Analysis
+========================================================
+
+**Sun Kuk Kim, Edoardo Romagnoli, Shilpa Anjali, Ariyandat Sunny**
+
+
+The Objective
+---------------------------------------------------------
+
+The objective of this is to analyze factors that can be used for **Kaggle's Predicting Cab Booking Cancellation Case** This is not to generate final solution for the case, but rather to perform initial analysis
+
+
+The Business Context
+---------------------------------------------------------
+
+A company wants to improve its customer service. The problem is cancelling booked cab due to unavilalbility of a car. The problem is that cancellation may happen very near the appointment time, and this may cause great inconvenience for its customers.
+
+
+The Goal of Competition
+---------------------------------------------------------
+
+
+<blockquote> <p>
+Create a predictive model to classify new bookings so that we can predict whether the booking will be cancelled due to car unavailability.
+</p> </blockquote>
+
+
+
+Provided Data
+--------------------------------------------
+
+For this analysis, following data was provided by Kaggle.
+
+
+To make this decision, the committee uses a number of data about the applicants. Let us consider for example the following attributes in evaluating the car booking (of course in practice many more can be considered):
+
+1. Vehicle Model ID
+2. Package ID
+3. Travel Type ID
+4. From Area ID
+5. To Area ID
+6. From City ID
+7. To City ID
+8. Online Booking
+9. Mobile Site Booking
+10. From Lat
+11. From Long
+12. To lat
+13. To Long
+14. Car Cancellation
+15. Cost of Error
+
+
+```{r echo=FALSE, message=FALSE, prompt=FALSE, results='asis'}
+# let's make the data into data.matrix classes so that we can easier visualize them
+ProjectDataFactor = data.matrix(ProjectDataFactor)
+ProjectData = data.matrix(ProjectData)
+```
+
+This is how the first `r min(max_data_report, nrow(ProjectData))` data looks:
+<br>
+
+<div class="row">
+<div class="col-md-6">
+```{r echo=FALSE, message=FALSE, prompt=FALSE, results='asis'}
+show_data = data.frame(round(ProjectDataFactor,2))
+show_data = show_data[1:min(max_data_report,nrow(show_data)),]
+row<-rownames(show_data)
+dfnew<-cbind(row,show_data)
+change<-colnames(dfnew)
+change[1]<-"Variables"
+colnames (dfnew)<-change
+m1<-gvisTable(dfnew,options=list(showRowNumber=TRUE,width=1220, height=min(400,27*(nrow(show_data)+1)),allowHTML=TRUE,page='disable'))
+print(m1,'chart')
+```
+</div>
+</div>
+<br> <br>
+
+
+
+#### Factor Analysis in 6 steps
+
+Here we will use 6-step factor analysis as learned in the class 
+
+1. Confirm the data is metric 
+
+2. Decide whether to scale or standardize the data
+
+3. Check the correlation matrix to see if Factor Analysis makes sense
+
+4. Develop a scree plot and decide on the number of factors to be derived
+
+5. Interpret the factors (consider factor rotations - technical but useful)
+
+6. Save factor scores for subsequent analyses
+
+Let's follow these steps.
+
+#### Step 1: Confirm the data is metric
+
+First the data have to be *metric*, meaning data are all numbers and can be compared to one another (1 is greater than 2, etc). 
+
+The data we use here have the following descriptive statistics: 
+
+<div class="row">
+<div class="col-md-6">
+```{r echo=FALSE, comment=NA, warning=FALSE, message=FALSE,results='asis'}
+show_data = data.frame(round(my_summary(ProjectDataFactor),2))
+#show_data = show_data[1:min(max_data_report,nrow(show_data)),]
+row<-rownames(show_data)
+dfnew<-cbind(row,show_data)
+change<-colnames(dfnew)
+change[1]<-"Variables"
+colnames (dfnew)<-change
+m1<-gvisTable(dfnew,options=list(showRowNumber=TRUE,width=1220, height=min(400,27*(nrow(show_data)+1)),allowHTML=TRUE,page='disable'))
+print(m1,'chart')
+```
+</div>
+</div>
+
+
+#### Step 2: Decide whether to scale or standardize the data
+
+Here for the sake of simplicity and analysis, we decided to keep the data as it is. Hence, we can proceed to step 3. 
+
+
+#### Step 3:  Check correlation matrix to see if Factor Analysis makes sense
+
+We will use the same type of dimensionality reduction methods as the one used in class. So, as we did before, it is useful to see the correlation matrix of the original attributes. 
+
+This is the correlation matrix of the `r length(factor_attributes_used)` original variable we use for factor analysis:
+
+```{r echo=FALSE, comment=NA, warning=FALSE, message=FALSE, results='asis'}
+thecor = round(cor(ProjectDataFactor),2)
+colnames(thecor)<-colnames(ProjectDataFactor)
+rownames(thecor)<-colnames(ProjectDataFactor)
+## printing the result in a clean-slate table
+#cat(renderHeatmapX(thecor, border=1,center = 0,vrange_up = 1, vrange_down = 1))
+cat(renderHeatmapX(thecor, border=1))
+    
+```
+
+
+#### Step 4. Develop a scree plot and decide on the number of factors to be derived
+
+Here we look at both numerical and graphical representation of the data to decide number of factors to be used in the analysis. 
+
+The following is the numerical representation.
+
+```{r echo=FALSE, comment=NA, warning=FALSE, message=FALSE,results='asis'}
+UnRotated_Results<-principal(ProjectDataFactor, nfactors=ncol(ProjectDataFactor), rotate="none",score=TRUE)
+UnRotated_Factors<-round(UnRotated_Results$loadings,2)
+UnRotated_Factors<-as.data.frame(unclass(UnRotated_Factors))
+colnames(UnRotated_Factors)<-paste("Component",1:ncol(UnRotated_Factors),sep=" ")
+```
+
+
+<br>
+
+```{r echo=FALSE, comment=NA, warning=FALSE, error=FALSE,message=FALSE,results='asis'}
+Variance_Explained_Table_results<-PCA(ProjectDataFactor, graph=FALSE)
+Variance_Explained_Table<-Variance_Explained_Table_results$eig
+Variance_Explained_Table_copy<-Variance_Explained_Table
+
+
+row=1:nrow(Variance_Explained_Table)
+name<-paste("Component No:",row,sep="")
+Variance_Explained_Table<-cbind(name,Variance_Explained_Table)
+Variance_Explained_Table<-as.data.frame(Variance_Explained_Table)
+colnames(Variance_Explained_Table)<-c("Components", "Eigenvalue", "Percentage_of_explained_variance", "Cumulative_percentage_of_explained_variance")
+
+m<-gvisTable(Variance_Explained_Table,options=list(width=1200, height=min(400,27*(nrow(show_data)+1)),allowHTML=TRUE,page='disable'),formats=list(Eigenvalue="#.##",Percentage_of_explained_variance="#.##",Cumulative_percentage_of_explained_variance="#.##"))
+print(m,'chart')
+```
+<br> <br>
+
+
+The following is the scree plot.
+
+
+```{r Fig1, echo=FALSE, comment=NA, results='asis', message=FALSE, fig.align='center', fig=TRUE}
+
+eigenvalues  <- Variance_Explained_Table[,2]
+df           <- cbind(as.data.frame(eigenvalues), c(1:length(eigenvalues)), rep(1, length(eigenvalues)))
+colnames(df) <- c("eigenvalues", "components", "abline")
+Line         <- gvisLineChart(as.data.frame(df), xvar="components", yvar=c("eigenvalues","abline"), options=list(title='Scree plot', legend="right", width=900, height=600, hAxis="{title:'Number of Components', titleTextStyle:{color:'black'}}", vAxes="[{title:'Eigenvalues'}]",  series="[{color:'green',pointSize:3, targetAxisIndex: 0}]"))
+print(Line, 'chart')
+```
+
+
+
+```{r echo=FALSE, comment=NA, warning=FALSE,message=FALSE,results='asis'}
+if (factor_selectionciterion == "eigenvalue")
+  factors_selected = sum(Variance_Explained_Table_copy[,1] >= 1)
+if (factor_selectionciterion == "variance")
+  factors_selected = 1:head(which(Variance_Explained_Table_copy[,"cumulative percentage of variance"]>= minimum_variance_explained),1)
+if (factor_selectionciterion == "manual")
+  factors_selected = manual_numb_factors_used
+
+```
+
+Based on the following three criteria we will deicde which factor to use
+
+1. eigenvalue > 1
+2. cumulative percentage of variance explained
+3. the elbow of the scree plot
+
+#### 5. Interpret the factors (consider factor rotations - technical but useful)
+
+For our data, the `r factors_selected` selected factors look as follows after the `r rotation_used` rotation: 
+
+```{r echo=FALSE, comment=NA, warning=FALSE, message=FALSE,results='asis'}
+
+Rotated_Results<-principal(ProjectDataFactor, nfactors=max(factors_selected), rotate=rotation_used,score=TRUE)
+Rotated_Factors<-round(Rotated_Results$loadings,2)
+Rotated_Factors<-as.data.frame(unclass(Rotated_Factors))
+colnames(Rotated_Factors)<-paste("Component",1:ncol(Rotated_Factors),sep=" ")
+
+sorted_rows <- sort(Rotated_Factors[,1], decreasing = TRUE, index.return = TRUE)$ix
+Rotated_Factors <- Rotated_Factors[sorted_rows,]
+
+show_data <- Rotated_Factors 
+#show_data = show_data[1:min(max_data_report,nrow(show_data)),]
+row<-rownames(show_data)
+dfnew<-cbind(row,show_data)
+change<-colnames(dfnew)
+change[1]<-"Variables"
+colnames (dfnew)<-change
+m1<-gvisTable(dfnew,options=list(showRowNumber=TRUE,width=1220, height=min(400,27*(nrow(show_data)+1)),allowHTML=TRUE,page='disable'))
+print(m1,'chart')
+```
+<br> <br>
+
+To better visualize and interpret the factors we often "supress" loadings with small values, e.g. with absolute values smaller than `r MIN_VALUE`. In this case our factors look as follows after suppressing the small numbers:
+
+```{r echo=FALSE, comment=NA, warning=FALSE, message=FALSE,results='asis'}
+Rotated_Factors_thres <- Rotated_Factors
+Rotated_Factors_thres[abs(Rotated_Factors_thres) < MIN_VALUE]<-NA
+colnames(Rotated_Factors_thres)<- colnames(Rotated_Factors)
+rownames(Rotated_Factors_thres)<- rownames(Rotated_Factors)
+
+show_data <- Rotated_Factors_thres 
+#show_data = show_data[1:min(max_data_report,nrow(show_data)),]
+row<-rownames(show_data)
+dfnew<-cbind(row,show_data)
+change<-colnames(dfnew)
+change[1]<-"Variables"
+colnames (dfnew)<-change
+m1<-gvisTable(dfnew,options=list(showRowNumber=TRUE,width=1220, height=min(400,27*(nrow(show_data)+1)),allowHTML=TRUE,page='disable'))
+print(m1,'chart')
+```
+<br> <br>
+
+
+#### Step 6. Save factor scores for subsequent analyses
+
+Once we decide which factors to use, we will save this for future analysis. 
+
+
+<br> <br>
+
+
