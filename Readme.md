@@ -8,11 +8,11 @@ Sessions 2-3 of INSEAD Data Analytics for Business Course: Dimensionality Reduct
 
 **Industry:** Education
 
-**Project Description:** Introduction to Data Analytics for Business (INSEAD COURSE)
+**Project Description:** Big Data and Data Analytics Project Submission
 
-**Data Description:** Basic Example Data
+**Data Description:** Keggle Car Cancellation Prediction Analysis
 
-**Author(s):** T. Evgeniou
+**Author(s):** Sun Kuk Kim, Sunny Ariyandat, Shilpa Anjali, Edoardo Romagnoli
 
 **Author(s)' Affiliations:** INSEAD
 
@@ -22,19 +22,19 @@ INSTRUCTIONS FOR PROJECT
 (*NOTE: The very first time you run the project it may take a couple of minutes as it will also install all necessary R libraries. These are listed in the library.R file in the R_code directory*).
 
 
-[1] Please open and source the file RunStudy.R 
+[1] Please open and source the file SAS_RunStudy.R 
 
-This will reproduce the default report and slides of this project, as well as  start the web-application for this project
+This will reproduce the default report of this project, as well as  start the web-application for this project
 
-You can then click on the generated HTML files in the doc directory to view the report or the slides.
+You can then click on the generated HTML files in the doc directory to view the report.
 
 **MODIFYING AND RE-RUNNING**
 
 [2] To modify the project parameters, please edit them in the file 
 
-RunStudy.R
+SAS_RunStudy.R
 
-and source this file again. A new report, slides, and (if needed) web application will be launched. 
+and source this file again. A new report will be launched. 
 
 (NOTE: if the web application is running, you will need to first stop that by clicking on the "stop" button in the concole window of your Rstudio)
 
@@ -45,7 +45,7 @@ and source this file again. A new report, slides, and (if needed) web applicatio
 
 **Note:** Please press the stop button in the Console window to stop running the web application when needed.
 
-**Note:** Sourcing the RunStudy.R file will create 2 new html file in the doc directory (one for the report and one for the slides). If you want to publish those online, you will need to move them to a gh-pages branch and delete them from the master branch afterwards. To do so please follow the following steps:
+**Note:** Sourcing the SAS_RunStudy.R file will create a new html file in the doc directory. If you want to publish those online, you will need to move them to a gh-pages branch and delete them from the master branch afterwards. To do so please follow the following steps:
 
 1. commit the files in your master branch
 
